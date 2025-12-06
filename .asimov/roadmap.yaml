@@ -3,12 +3,15 @@
 # Last updated: 2025-12-06
 #
 # ═══════════════════════════════════════════════════════════════════════════════
-# CODING STANDARDS
+# CODING STANDARDS (ADR-007)
 # ═══════════════════════════════════════════════════════════════════════════════
-# - Unit tests: Keep with code (Rust way: #[cfg(test)] mod tests in same file)
-# - Test coverage: 100% mandatory for all functional code
-# - Zero warnings policy
-# - Prefer smaller files but don't split if it adds complexity
+# Philosophy: Human-readable, beautiful, well-formatted code
+#
+# Rust recommendations followed STRICTLY ("should" → "must"):
+# - File size: 1,000 lines soft limit, 1,500 hard limit
+# - Tests: Colocated with code (#[cfg(test)] mod tests)
+# - Coverage: 100% mandatory (ADR-004)
+# - Warnings: Zero tolerance
 # ═══════════════════════════════════════════════════════════════════════════════
 
 metadata:
@@ -40,43 +43,65 @@ current:
 
 next:
   - version: "5.3.0"
-    summary: "Code Organization - Split Large Files (Deferred)"
-    priority: LOW
-    status: deferred
+    summary: "Code Organization - Human-Readable File Sizes (ADR-007)"
+    priority: HIGH
+    status: pending
 
     rationale: |
-      ANALYSIS COMPLETE (2025-12-06):
+      Per ADR-007: Rust "should" becomes "must" for this project.
+      Human-readable, beautiful, well-formatted code is a core value.
 
-      evaluator.rs (2,918 lines):
-        - Match dispatch is IDIOMATIC RUST - don't split
-        - Splitting would require complex traits or fn pointers
-        - Code is well-organized with section comments
-        - DECISION: Keep as-is
+      Thresholds:
+        - < 500 lines: Ideal
+        - 500-1,000: Acceptable
+        - 1,000-1,500: Evaluate for split
+        - > 1,500: Split required
 
-      parser/mod.rs (2,059 lines):
-        - ~800 lines parsing logic, ~1,260 lines tests
-        - Uses clean serde_yaml (not regex soup)
-        - DECISION: Keep as-is, tests with code is correct
+    deliverables:
+      - task: "Split commands.rs (2,445 lines → ~14 modules)"
+        status: pending
+        details: |
+          cli/commands/
+          ├── mod.rs         (~200 lines) - shared utilities + tests
+          ├── calculate.rs   - calculate() + tests
+          ├── validate.rs    - validate() + tests
+          ├── audit.rs       - audit() + tests
+          ├── export.rs      - export() + tests
+          ├── import.rs      - import() + tests
+          ├── compare.rs     - compare() + tests
+          ├── variance.rs    - variance() + tests
+          ├── sensitivity.rs - sensitivity() + tests
+          ├── goal_seek.rs   - goal_seek() + tests
+          ├── break_even.rs  - break_even() + tests
+          ├── functions.rs   - functions() + tests
+          ├── upgrade.rs     - upgrade() + tests
+          └── watch.rs       - watch() + tests
 
-      commands.rs (2,445 lines):
-        - Each command is independent - CAN be split
-        - But splitting requires careful test organization
-        - Current structure works well
-        - DECISION: Optional, low priority
+      - task: "Split parser/mod.rs (2,059 lines → ~8 modules)"
+        status: pending
+        details: |
+          parser/
+          ├── mod.rs        (~200 lines) - entry point + dispatch
+          ├── single.rs     - single document parsing + tests
+          ├── multi_doc.rs  - multi-document YAML + tests
+          ├── includes.rs   - file includes resolution + tests
+          ├── tables.rs     - table/column parsing + tests
+          ├── scalars.rs    - scalar variable parsing + tests
+          ├── scenarios.rs  - scenario parsing + tests
+          └── validation.rs - JSON schema validation + tests
 
-    decision: |
-      Files are large but well-organized. File size alone is not a problem.
-      The Rust ecosystem has many larger, well-maintained files.
-      Splitting for splitting's sake adds complexity without benefit.
-
-      Focus on:
-      - Code quality over arbitrary line counts
-      - Tests colocated with code (Rust convention)
-      - Clear section organization within files
+      - task: "evaluator.rs (2,918 lines) - DEFERRED"
+        status: deferred
+        rationale: |
+          Exception per ADR-007: Match dispatch is idiomatic Rust.
+          Splitting would require complex traits/fn pointers.
+          16 section comments provide adequate navigation.
+          Revisit if cleaner splitting pattern emerges.
 
     success_criteria:
-      - "Code quality maintained"
-      - "All 918+ tests pass"
+      - "No file > 1,500 lines (except evaluator.rs - documented exception)"
+      - "Tests colocated with code in each new module"
+      - "All 965+ tests pass"
       - "Zero warnings"
 
 # ═══════════════════════════════════════════════════════════════════════════════

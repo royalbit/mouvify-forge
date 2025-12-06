@@ -3,6 +3,24 @@
 # This file contains project-specific configuration.
 # Behavior protocols are hardcoded in the asimov binary.
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# CODING STANDARDS (ADR-007)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Philosophy: Human-readable, beautiful, well-formatted code
+#
+# Rust recommendations are followed STRICTLY:
+# - "should" in Rust docs becomes "must" for this project
+# - File size: 1,000 lines soft limit, 1,500 hard limit
+# - Tests: Colocated with code (#[cfg(test)] mod tests)
+# - Coverage: 100% mandatory (ADR-004)
+# - Warnings: Zero tolerance
+# - Linting: clippy pedantic
+#
+# References:
+# - https://doc.rust-lang.org/book/ch07-00-managing-growing-projects-with-packages-crates-and-modules.html
+# - https://doc.rust-lang.org/book/ch07-05-separating-modules-into-different-files.html
+# ═══════════════════════════════════════════════════════════════════════════════
+
 identity:
   name: "my-project"
   type: rust
