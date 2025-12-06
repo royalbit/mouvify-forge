@@ -8,8 +8,12 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # Philosophy: Human-readable, beautiful, well-formatted code
 #
-# Rust recommendations are followed STRICTLY:
-# - "should" in Rust docs becomes "must" for this project
+# RFC 2119 Interpretation for RoyalBit:
+#   MUST   → We follow (obviously)
+#   SHOULD → We follow (best practice = we do it)
+#   MAY    → We don't care (no opinion needed, zero bikeshedding)
+#
+# Rust recommendations followed STRICTLY:
 # - File size: 1,000 lines soft limit, 1,500 hard limit
 # - Tests: Colocated with code (#[cfg(test)] mod tests)
 # - Coverage: 100% mandatory (ADR-004)
@@ -18,7 +22,7 @@
 #
 # References:
 # - https://doc.rust-lang.org/book/ch07-00-managing-growing-projects-with-packages-crates-and-modules.html
-# - https://doc.rust-lang.org/book/ch07-05-separating-modules-into-different-files.html
+# - RFC 2119: https://www.rfc-editor.org/rfc/rfc2119
 # ═══════════════════════════════════════════════════════════════════════════════
 
 identity:
