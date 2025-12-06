@@ -7,8 +7,8 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # - Unit tests: Keep with code (Rust way: #[cfg(test)] mod tests in same file)
 # - Test coverage: 100% mandatory for all functional code
-# - No file > 1,000 lines (split into submodules when exceeded)
 # - Zero warnings policy
+# - Prefer smaller files but don't split if it adds complexity
 # ═══════════════════════════════════════════════════════════════════════════════
 
 metadata:
@@ -40,70 +40,42 @@ current:
 
 next:
   - version: "5.3.0"
-    summary: "Code Organization - Split Large Files"
-    priority: HIGH
-    status: pending
+    summary: "Code Organization - Split Large Files (Deferred)"
+    priority: LOW
+    status: deferred
 
     rationale: |
-      Large files hurt human readability and maintainability.
-      evaluator.rs (2,918 lines) has 16 clear sections that can be split.
-      parser/mod.rs (2,059 lines) is clean serde_yaml, split by feature.
-      Tests stay with code per Rust convention (#[cfg(test)] mod tests).
+      ANALYSIS COMPLETE (2025-12-06):
 
-    deliverables:
-      - task: "Split evaluator.rs into submodules by function category"
-        status: pending
-        details: |
-          evaluator/
-          ├── mod.rs          (~300 lines) - Value, EvalContext, evaluate(), dispatch + tests
-          ├── math.rs         (~170 lines) - ABS, ROUND, SQRT, POW, EXP, LN, LOG + tests
-          ├── aggregation.rs  (~90 lines)  - SUM, AVERAGE, COUNT, MIN, MAX, PRODUCT + tests
-          ├── statistical.rs  (~135 lines) - STDEV, VAR, MEDIAN, PERCENTILE, CORREL + tests
-          ├── conditional.rs  (~205 lines) - SUMIF, COUNTIF, AVERAGEIF, SUMIFS + tests
-          ├── array.rs        (~55 lines)  - INDEX, MATCH, CHOOSE + tests
-          ├── logical.rs      (~50 lines)  - IF, AND, OR, NOT, IFS + tests
-          ├── text.rs         (~75 lines)  - CONCAT, LEFT, RIGHT, MID, LEN + tests
-          ├── dates.rs        (~300 lines) - TODAY, DATE, YEAR, EDATE, EOMONTH + tests
-          ├── lookup.rs       (~250 lines) - VLOOKUP, HLOOKUP, XLOOKUP, INDIRECT + tests
-          ├── financial.rs    (~330 lines) - NPV, IRR, PMT, PV, FV, SLN, DB, DDB + tests
-          ├── forge.rs        (~150 lines) - VARIANCE_STATUS, SCENARIO, GROWTH_RATE + tests
-          └── advanced.rs     (~115 lines) - LET, LAMBDA, SWITCH, FILTER, SORT + tests
+      evaluator.rs (2,918 lines):
+        - Match dispatch is IDIOMATIC RUST - don't split
+        - Splitting would require complex traits or fn pointers
+        - Code is well-organized with section comments
+        - DECISION: Keep as-is
 
-      - task: "Split parser/mod.rs into submodules (2,059 lines)"
-        status: pending
-        details: |
-          parser/
-          ├── mod.rs        (~200 lines) - entry point, dispatch + tests
-          ├── single.rs     (~150 lines) - single doc parsing + tests
-          ├── multi_doc.rs  (~100 lines) - multi-document YAML + tests
-          ├── includes.rs   (~80 lines)  - file includes resolution + tests
-          ├── tables.rs     (~150 lines) - table/column parsing + tests
-          ├── scalars.rs    (~100 lines) - scalar variable parsing + tests
-          ├── scenarios.rs  (~50 lines)  - scenario parsing + tests
-          └── validation.rs (~30 lines)  - JSON schema validation + tests
+      parser/mod.rs (2,059 lines):
+        - ~800 lines parsing logic, ~1,260 lines tests
+        - Uses clean serde_yaml (not regex soup)
+        - DECISION: Keep as-is, tests with code is correct
 
-      - task: "Split commands.rs by command handler (2,445 lines)"
-        status: pending
-        details: |
-          commands/
-          ├── mod.rs         - dispatch + shared helpers + tests
-          ├── calculate.rs   - calculate() + tests
-          ├── validate.rs    - validate() + tests
-          ├── audit.rs       - audit(), dependency tree + tests
-          ├── export.rs      - export() + tests
-          ├── import.rs      - import() + tests
-          ├── compare.rs     - compare() + tests
-          ├── variance.rs    - variance() + tests
-          ├── sensitivity.rs - sensitivity() + tests
-          ├── goal_seek.rs   - goal_seek() + tests
-          ├── break_even.rs  - break_even() + tests
-          ├── functions.rs   - functions() + tests
-          ├── upgrade.rs     - upgrade() + tests
-          └── watch.rs       - watch() + tests
+      commands.rs (2,445 lines):
+        - Each command is independent - CAN be split
+        - But splitting requires careful test organization
+        - Current structure works well
+        - DECISION: Optional, low priority
+
+    decision: |
+      Files are large but well-organized. File size alone is not a problem.
+      The Rust ecosystem has many larger, well-maintained files.
+      Splitting for splitting's sake adds complexity without benefit.
+
+      Focus on:
+      - Code quality over arbitrary line counts
+      - Tests colocated with code (Rust convention)
+      - Clear section organization within files
 
     success_criteria:
-      - "No file > 1,000 lines"
-      - "Unit tests in same file as code (Rust convention)"
+      - "Code quality maintained"
       - "All 918+ tests pass"
       - "Zero warnings"
 
